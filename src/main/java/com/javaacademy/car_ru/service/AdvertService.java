@@ -1,7 +1,8 @@
 package com.javaacademy.car_ru.service;
 
-import com.javaacademy.car_ru.dto.AdvertDTO;
-import com.javaacademy.car_ru.entyty.Advert;
+import com.javaacademy.car_ru.dto.AdvertDtoRq;
+import com.javaacademy.car_ru.dto.AdvertDtoRs;
+import com.javaacademy.car_ru.entity.Advert;
 import com.javaacademy.car_ru.repository.AdvertRepository;
 import java.math.BigDecimal;
 import java.time.LocalDate;
@@ -16,32 +17,52 @@ import org.springframework.stereotype.Service;
 public class AdvertService {
     private final AdvertRepository advertRepository;
 
-    public Advert createAdvert(AdvertDTO advertDTO) {
-        LocalDate date = advertDTO.getPublicationDate() == null ? LocalDate.now() : advertDTO.getPublicationDate();
-        String id = UUID.randomUUID().toString();
-        Advert advert = new Advert(id,
-                advertDTO.getBrandName(),
-                advertDTO.getColour(),
-                advertDTO.getPrice(),
-                advertDTO.getModel(),
-                date);
+    public AdvertDtoRs createAdvert(AdvertDtoRq advertDto) {
+        Advert advert = convertToAdvertEntity(advertDto);
         advertRepository.addAdvert(advert);
-        return advert;
+        return convertToAdvertDtoRs(advert);
     }
 
-    public List<Advert> getAllAdvertsFromDate(LocalDate date) {
-        return advertRepository.getAllAdvertsFromDate(date);
+    public List<AdvertDtoRs> getAllAdvertsFromDate(LocalDate date) {
+        List<Advert> adverts = advertRepository.getAllAdvertsFromDate(date);
+        return adverts.stream()
+                .map(this::convertToAdvertDtoRs)
+                .toList();
     }
 
     public boolean deleteById(String id) {
         return advertRepository.deleteById(id);
     }
 
-    public Optional<Advert> takeById(String id) {
-        return advertRepository.takeById(id);
+    public Optional<AdvertDtoRs> takeById(String id) {
+        return advertRepository.takeById(id)
+                .map(this::convertToAdvertDtoRs);
     }
 
-    public List<Advert> takeByParameters(String brandName, String colour, BigDecimal price, String model) {
-        return advertRepository.takeByParameter(brandName, colour, price, model);
+    public List<AdvertDtoRs> takeByParameters(String brandName, String colour, BigDecimal price, String model) {
+        List<Advert> adverts = advertRepository.takeByParameter(brandName, colour, price, model);
+        return adverts.stream()
+                .map(this::convertToAdvertDtoRs)
+                .toList();
+    }
+
+    private Advert convertToAdvertEntity(AdvertDtoRq advertDto) {
+        LocalDate date = advertDto.getPublicationDate() == null ? LocalDate.now() : advertDto.getPublicationDate();
+        String id = UUID.randomUUID().toString();
+        return new Advert(id,
+                advertDto.getBrandName(),
+                advertDto.getColour(),
+                advertDto.getPrice(),
+                advertDto.getModel(),
+                date);
+    }
+
+    private AdvertDtoRs convertToAdvertDtoRs(Advert advert) {
+        return new AdvertDtoRs(advert.getId(),
+                advert.getBrandName(),
+                advert.getColour(),
+                advert.getPrice(),
+                advert.getModel(),
+                advert.getPublicationDate());
     }
 }

@@ -1,22 +1,19 @@
-package com.javaacademy.car_ru.entyty;
+package com.javaacademy.car_ru.dto;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
+import lombok.AllArgsConstructor;
 import lombok.Data;
-import lombok.NonNull;
+import lombok.NoArgsConstructor;
 
 @Data
-public class Advert {
-    @NonNull
+@NoArgsConstructor
+@AllArgsConstructor
+public class AdvertDtoRs {
     private String id;
-    @NonNull
     private String brandName;
-    @NonNull
     private String colour;
-    @NonNull
     private BigDecimal price;
-    @NonNull
     private String model;
-    @NonNull
     private LocalDate publicationDate;
 }

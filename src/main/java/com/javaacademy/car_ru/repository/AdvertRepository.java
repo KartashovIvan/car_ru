@@ -1,9 +1,10 @@
 package com.javaacademy.car_ru.repository;
 
-import com.javaacademy.car_ru.entyty.Advert;
+import com.javaacademy.car_ru.entity.Advert;
 import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.util.*;
+import java.util.function.Predicate;
 import org.springframework.stereotype.Component;
 
 @Component
@@ -30,31 +31,41 @@ public class AdvertRepository {
     }
 
     public List<Advert> takeByParameter(String brandName, String colour, BigDecimal price, String model) {
-        List<Advert> filterList = new ArrayList<>(adverts.values());
+        List<Advert> allAdverts = new ArrayList<>(adverts.values());
+        List<Advert> filterList = new ArrayList<>();
         if (brandName != null) {
-            filterList = new ArrayList<>(filterList
-                    .stream()
-                    .filter(advert -> advert.getBrandName().equals(brandName))
-                    .toList());
+            filterList = filterListByParameter(allAdverts,
+                    filterList,
+                    advert -> advert.getBrandName().equals(brandName));
         }
         if (colour != null) {
-            filterList = new ArrayList<>(filterList
-                    .stream()
-                    .filter(advert -> advert.getColour().equals(colour))
-                    .toList());
+            filterList = filterListByParameter(allAdverts,
+                    filterList,
+                    advert -> advert.getColour().equals(colour));
         }
         if (price != null) {
-            filterList = new ArrayList<>(filterList
-                    .stream()
-                    .filter(advert -> advert.getPrice().compareTo(price) == 0)
-                    .toList());
+            filterList = filterListByParameter(allAdverts,
+                    filterList,
+                    advert -> advert.getPrice().compareTo(price) == 0);
         }
         if (model != null) {
-            filterList = new ArrayList<>(filterList
-                    .stream()
-                    .filter(advert -> advert.getModel().equals(model))
-                    .toList());
+            filterList = filterListByParameter(allAdverts,
+                    filterList,
+                    advert -> advert.getModel().equals(model));
         }
         return filterList;
+    }
+
+    private List<Advert> filterListByParameter(List<Advert> adverts,
+                                               List<Advert> filterList,
+                                               Predicate<Advert> filter) {
+        if (filterList.isEmpty()) {
+            return adverts.stream()
+                    .filter(filter)
+                    .toList();
+        }
+        return filterList.stream()
+                .filter(filter)
+                .toList();
     }
 }
