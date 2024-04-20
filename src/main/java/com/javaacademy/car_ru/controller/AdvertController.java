@@ -27,11 +27,8 @@ public class AdvertController {
     }
 
     @GetMapping
-    public ResponseEntity<List<AdvertDtoRs>> getAllAdvertsFromDate(@RequestParam LocalDate date) {
-        List<AdvertDtoRs> advertsFromDate = advertService.getAllAdvertsFromDate(date);
-        return advertsFromDate.size() > 0
-                ? ResponseEntity.status(FOUND).body(advertsFromDate)
-                : ResponseEntity.status(NOT_FOUND).build();
+    public List<AdvertDtoRs> getAllAdvertsFromDate(@RequestParam LocalDate date) {
+        return advertService.getAllAdvertsFromDate(date);
     }
 
     @DeleteMapping

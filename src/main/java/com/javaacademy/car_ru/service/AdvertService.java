@@ -6,6 +6,7 @@ import com.javaacademy.car_ru.entity.Advert;
 import com.javaacademy.car_ru.repository.AdvertRepository;
 import java.math.BigDecimal;
 import java.time.LocalDate;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
@@ -24,8 +25,8 @@ public class AdvertService {
     }
 
     public List<AdvertDtoRs> getAllAdvertsFromDate(LocalDate date) {
-        List<Advert> adverts = advertRepository.getAllAdvertsFromDate(date);
-        return adverts.stream()
+        List<Advert> advertsFromDate = new ArrayList<>();
+        return advertRepository.getAllAdvertsFromDate(date).stream()
                 .map(this::convertToAdvertDtoRs)
                 .toList();
     }
